@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ limit: limit, extended: true }));
 
 
 
-const port = process.env.PORT || 5000;
+
 
 
 app.get('/',(req,res)=>{
@@ -188,5 +188,5 @@ let transporter = nodemailer.createTransport({
 
 
 
-
+app.use('/.netlify/functions/app', router);
 module.exports.handler = serverless(app);
