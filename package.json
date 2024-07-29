@@ -4,7 +4,7 @@
   "description": "This is the website of greenovate solutions",
   "main": "app.js",
   "scripts": {
-     "build": "netlify-lambda build functions --output functions-build",
+     "build": "netlify-lambda build functions ",
     "start": "netlify-lambda serve functions"
   },
   "author": "",
