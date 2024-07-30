@@ -4,7 +4,8 @@
   "description": "This is the website of greenovate solutions",
   "main": "functions/app.js",
 "scripts": {
-  "build": "netlify functions:build --src netlify/functions"
+  "build": "netlify functions:build --src netlify/functions",
+  "postinstall": "npm uninstall @esbuild/android-arm"
 },
   "author": "",
   "license": "ISC",
