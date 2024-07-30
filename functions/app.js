@@ -3,15 +3,11 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2/promise');
-
-
-
-
 const limit = process.env.BODY_PARSER_LIMIT || '100mb';
 
 
 const corsOptions = {
+  origin: ['http://api.greenovate.in', 'https://marvelous-paletas-956aab.netlify.app'] ,
   origin: ['https://api.greenovate.in'] ,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -19,35 +15,19 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-
-
 const app = express();
-
 // Apply CORS middleware
 app.use(cors(corsOptions));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: limit }));
 app.use(bodyParser.urlencoded({ limit: limit, extended: true }));
-
 const router = express.Router();
-
-
-
-
-
-
 
 
 app.get('/',(req,res)=>{
   res.send("This is the server third deployed on the elastic beanstalk service provided by awazon web service");
 });
-
-
-
-
-
 let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -57,9 +37,7 @@ let transporter = nodemailer.createTransport({
       pass: process.env.EMAIL_PASS
     }
   });
-
  
-
   
   app.post('/submit-form', async (req, res) => {
     try {
@@ -88,22 +66,15 @@ let transporter = nodemailer.createTransport({
       res.status(500).json({ message: 'An error occurred while processing your submission' });
     }
   });
-
-
  
-
-
-
   // Custom middleware to handle file uploads
   const handleFileUpload = (req, res, next) => {
     let body = '';
     let file = null;
     let fileName = '';
-
     req.on('data', chunk => {
         body += chunk.toString();
     });
-
     req.on('end', () => {
         const contentType = req.headers['content-type'];
         if (!contentType || !contentType.includes('multipart/form-data')) {
@@ -111,13 +82,11 @@ let transporter = nodemailer.createTransport({
             next();
             return;
         }
-
         const boundaryMatch = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
         if (!boundaryMatch) {
             res.status(400).send('Invalid Content-Type header');
             return;
         }
-
         const boundary = boundaryMatch[1] || boundaryMatch[2];
         const parts = body.split(`--${boundary}`);
         
@@ -139,7 +108,6 @@ let transporter = nodemailer.createTransport({
                 }
             }
         });
-
         req.body = formData;
         req.file = file ? { buffer: file, originalname: fileName } : null;
         next();
@@ -185,63 +153,6 @@ let transporter = nodemailer.createTransport({
           res.status(500).json({ message: 'An error occurred while processing your application' });
       }
   });
-
- // Database connection configuration
-const dbConfig = {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  ssl: {
-    rejectUnauthorized: true,
-  }
-};
-
-// Create database connection pool
-const pool = mysql.createPool(dbConfig);
-
-// Create table if not exists
-async function createTable() {
-  try {
-    const connection = await pool.getConnection();
-    await connection.query(`
-      CREATE TABLE IF NOT EXISTS contact_mini (
-        email VARCHAR(255) PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        message TEXT NOT NULL
-      )
-    `);
-    connection.release();
-    console.log('Table created or already exists');
-  } catch (error) {
-    console.error('Error creating table:', error);
-  }
-}
-
-// Handle form submission
-app.post('/submit-form-1', async (req, res) => {
-  const { name, email, message } = req.body;
-
-  try {
-    await createTable(); // Ensure table exists
-    const connection = await pool.getConnection();
-    const [result] = await connection.query(
-      'INSERT INTO contact_mini (email, name, message) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, message = ?',
-      [email, name, message, name, message]
-    );
-    connection.release();
-    res.json({ success: true, message: 'Form submitted successfully' });
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    res.status(500).json({ success: false, message: 'An error occurred' });
-  }
-});
-
   
-
-
-
-
 app.use('/.netlify/functions/app', router);
 module.exports.handler = serverless(app);
