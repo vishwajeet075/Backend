@@ -1,5 +1,6 @@
 [build]
-  functions = "functions"
+  functions = "functions-build"
+  command = "npm install && npm run build"
 
 [[redirects]]
   from = "/*"
@@ -7,4 +8,4 @@
   status = 200
 
 [functions]
-  directory = "functions"
+  directory = "functions-build"
