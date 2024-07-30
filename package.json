@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "lockfileVersion": 3,
   "requires": true,
+
+   "scripts": {
+    "start": "node server.js",
+    "build": "netlify-lambda build functions",
+    "dev": "netlify-lambda serve functions"
+  },
   "packages": {
     "": {
       "name": "internship_project",
