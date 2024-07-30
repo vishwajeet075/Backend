@@ -4,6 +4,7 @@
   "description": "This is the website of greenovate solutions",
   "main": "functions/app.js",
   "scripts": {
+    "start": "node netlify/functions/app.js"
     "build": "netlify functions:build --src netlify/functions",
   
   },
