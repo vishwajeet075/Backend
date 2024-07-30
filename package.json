@@ -20,11 +20,12 @@
     "parser": "^0.1.4",
     "serverless-http": "^3.2.0"
   },
-  "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/preset-env": "^7.25.2",
-    "babel-loader": "^9.1.3",
-    "netlify-lambda": "^2.0.16"
-  }
+"devDependencies": {
+  "@babel/core": "^7.12.0",
+  "@babel/preset-env": "^7.12.0",
+  "@babel/plugin-proposal-class-properties": "^7.12.0",
+  "babel-loader": "^8.1.0",
+  "webpack": "^4.44.2",
+  "netlify-lambda": "^2.0.16"
+}
 }
