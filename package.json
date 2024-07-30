@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "build": "netlify functions:build --src netlify/functions",
-    "postinstall": "npm uninstall @esbuild/android-arm && npm install esbuild"
+    "clean": "rm -rf node_modules && rm -rf package-lock.json && npm cache clean --force"
   },
   "author": "",
   "license": "ISC",
