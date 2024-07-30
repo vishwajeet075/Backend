@@ -9,7 +9,6 @@ const limit = process.env.BODY_PARSER_LIMIT || '100mb';
 
 
 const corsOptions = {
-  origin: ['http://api.greenovate.in', 'https://marvelous-paletas-956aab.netlify.app'] ,
   origin: ['https://api.greenovate.in'] ,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
