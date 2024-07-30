@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "This is the website of greenovate solutions",
   "main": "functions/app.js",
-  "scripts": {
-    "build": "netlify functions:build --src functions"
-  },
+"scripts": {
+  "build": "netlify functions:build --src netlify/functions"
+},
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -18,6 +18,6 @@
   },
   "devDependencies": {
     "@netlify/functions": "^2.0.0",
-    "netlify-cli": "^15.0.0"
+     "netlify-cli": "^12.0.11"
   }
 }
