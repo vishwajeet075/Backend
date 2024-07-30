@@ -5,7 +5,7 @@
   "main": "netlify/functions/app.js",
   "scripts": {
     "start": "node app.js",
-    "build": "netlify functions:build --src netlify/functions",
+ "build": "netlify functions:build --src netlify/functions",
     "clean": "rm -rf node_modules && rm -rf package-lock.json && npm cache clean --force"
   },
   "author": "",
