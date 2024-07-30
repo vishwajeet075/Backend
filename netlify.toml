@@ -1,5 +1,5 @@
 [build]
-   command = "export PLATFORM=linux-x64 && rm -rf node_modules && npm ci && npm run build"
+  command = "export PLATFORM=linux-x64 && npm run clean && npm ci && npm run build"
   functions = "netlify/functions"
   publish = "/opt/build/repo"
 
