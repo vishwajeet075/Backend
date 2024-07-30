@@ -2,9 +2,9 @@
   "name": "internship_project",
   "version": "1.0.0",
   "description": "This is the website of greenovate solutions",
-  "main": "functions/app.js",
+  "main": "netlify/functions/app.js",
   "scripts": {
-    "start": "node netlify/functions/app.js"
+    "start": "node app.js"
     "build": "netlify functions:build --src netlify/functions",
   
   },
