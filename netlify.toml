@@ -1,6 +1,7 @@
 [build]
-  functions = "netlify/functions"
   command = "rm -rf node_modules && npm ci && npm run build"
+  functions = "netlify/functions"
+  publish = "/opt/build/repo"
 
 [[redirects]]
   from = "/*"
