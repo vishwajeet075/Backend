@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "This is the website of greenovate solutions",
   "main": "functions/app.js",
-"scripts": {
-  "build": "netlify functions:build --src netlify/functions",
-  "postinstall": "npm uninstall @esbuild/android-arm"
-},
+  "scripts": {
+    "build": "netlify functions:build --src netlify/functions",
+    "postinstall": "npm uninstall @esbuild/android-arm",
+    "install:esbuild": "npm install esbuild-linux-64"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
