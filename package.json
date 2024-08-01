@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "This is the website of greenovate solutions",
   "main": "app.js",
-  "scripts": {
-    "build": "netlify-lambda build functions ",
-    "start": "netlify-lambda serve functions "
-  },
+ "scripts": {
+  "build": "netlify-lambda build functions --config ./webpack.config.js",
+  "start": "netlify-lambda serve functions --config ./webpack.config.js"
+},
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -20,7 +20,10 @@
     "serverless-http": "^3.2.0" ,
     "mysql2": "^3.11.0"
   },
-  "devDependencies": {
+ "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/preset-env": "^7.25.3",
     "netlify-lambda": "^2.0.16"
   }
 }
