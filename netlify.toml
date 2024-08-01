@@ -1,9 +1,0 @@
-[build]
-  command = "export PLATFORM=linux-x64 && npm run clean && npm ci && npm run build"
-  functions = "netlify/functions"
-  publish = "/opt/build/repo"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/app/:splat"
-  status = 200
