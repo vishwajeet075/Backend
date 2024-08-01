@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './functions/app.js', // Entry point for your application
+  entry: 'functions/app.js', // Entry point for your application
   output: {
     filename: 'app.bundle.js', // Output file name
     path: path.resolve(__dirname, 'functions-build') // Output directory
