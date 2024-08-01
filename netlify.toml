@@ -1,0 +1,11 @@
+[build]
+  functions = "functions-build"
+  command = "npm install && npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/app/:splat"
+  status = 200
+
+[functions]
+  directory = "functions-build"
