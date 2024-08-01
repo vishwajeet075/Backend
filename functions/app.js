@@ -16,25 +16,20 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
-let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, 
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+
+
 
 app.get('/',(req,res)=>{
   res.send("This is the server third deployed on the elastic beanstalk service provided by awazon web service");
 });
+
 let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -197,7 +192,7 @@ async function createTable() {
 // ... (keep your existing routes)
 
 // Handle form submission
-router.post('/submit-form-1', async (req, res) => {
+app.post('/submit-form-1', async (req, res) => {
   const { name, email, message } = req.body;
   try {
     await createTable(); // Ensure table exists
