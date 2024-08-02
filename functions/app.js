@@ -1,12 +1,10 @@
+console.log('Server starting...');
 const serverless = require('serverless-http');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const serverlessMysql = require('serverless-mysql');
-
-
-const app = express();
 const router = express.Router();
 
 const corsOptions = {
@@ -18,7 +16,12 @@ const corsOptions = {
 };
 
 
+const app = express();
 app.use(cors(corsOptions));
+
+
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '100mb' }));
@@ -29,6 +32,11 @@ app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
 app.get('/',(req,res)=>{
   res.send("This is the server third deployed on the elastic beanstalk service provided by awazon web service");
+});
+
+app.get('/test', (req, res) => {
+  console.log('Test route hit');
+  res.json({ message: 'Server is running' });
 });
 
 let transporter = nodemailer.createTransport({
