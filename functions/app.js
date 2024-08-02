@@ -10,7 +10,7 @@ const app = express();
 const router = express.Router();
 
 const corsOptions = {
-  origin: ['https://api.greenovate.in'],
+  origin: ['https://api.greenovate.in','https://server.greenovate.in'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -157,7 +157,7 @@ let transporter = nodemailer.createTransport({
       }
   });
 
-
+console.log('Initializing MySQL connection...');
 const mysql = serverlessMysql({
   config: {
     host: process.env.DB_HOST,
@@ -172,6 +172,7 @@ const mysql = serverlessMysql({
 });
 
 async function createTable() {
+    console.log('Attempting to create table...');
   try {
     await mysql.query(`
       CREATE TABLE IF NOT EXISTS contact_mini (
@@ -187,15 +188,19 @@ async function createTable() {
 }
 
 app.post('/submit-form-1', async (req, res) => {
+    console.log('Received form submission request');
+  console.log('Request body:', req.body);
   const { name, email, message } = req.body;
   try {
+       console.log('Ensuring table exists...');
     await createTable(); // Ensure table exists
-    
+
+     console.log('Inserting data into table...');
     await mysql.query(
       'INSERT INTO contact_mini (email, name, message) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, message = ?',
       [email, name, message, name, message]
     );
-
+    console.log('Data inserted successfully');
     await mysql.end();
 
     res.json({ success: true, message: 'Form submitted successfully' });
