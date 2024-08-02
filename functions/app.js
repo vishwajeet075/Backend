@@ -218,7 +218,51 @@ app.post('/submit-form-1', cors(corsOptions), async (req, res) => {
     }
 });
 
+async function createTable_contact() {
+  console.log('Attempting to create table...');
+  try {
+    await mysql.query(`
+      CREATE TABLE IF NOT EXISTS Contact (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        company VARCHAR(255),
+        designation VARCHAR(255),
+        city VARCHAR(255),
+        country VARCHAR(255),
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('Table created or already exists');
+  } catch (error) {
+    console.error('Error creating table:', error);
+  }
+}
 
+app.post('/submit-contact-form', cors(corsOptions), async (req, res) => {
+  console.log('Received form submission request');
+  console.log('Request body:', req.body);
+  const { name, email, company, designation, city, country, message } = req.body;
+
+  try {
+    console.log('Ensuring table exists...');
+    await createTable_contact(); // Ensure table exists
+
+    console.log('Inserting data into table...');
+    await mysql.query(
+      'INSERT INTO Contact (name, email, company, designation, city, country, message) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [name, email, company, designation, city, country, message]
+    );
+
+    console.log('Data inserted successfully');
+    await mysql.end();
+    res.json({ success: true, message: 'Form submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    res.status(500).json({ success: false, message: 'An error occurred' });
+  }
+});
 
 app.use('/.netlify/functions/app', router);
 
