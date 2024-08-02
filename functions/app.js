@@ -3,6 +3,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const serverlessMysql = require('serverless-mysql');
 
 
 const app = express();
@@ -156,7 +157,8 @@ let transporter = nodemailer.createTransport({
       }
   });
 
-const mysql = require('serverless-mysql')({
+
+const mysql = serverlessMysql({
   config: {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -184,13 +186,8 @@ async function createTable() {
   }
 }
 
-exports.handler = async (event, context) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
-
-  const { name, email, message } = JSON.parse(event.body);
-
+app.post('/submit-form-1', async (req, res) => {
+  const { name, email, message } = req.body;
   try {
     await createTable(); // Ensure table exists
     
@@ -201,18 +198,12 @@ exports.handler = async (event, context) => {
 
     await mysql.end();
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true, message: 'Form submitted successfully' })
-    };
+    res.json({ success: true, message: 'Form submitted successfully' });
   } catch (error) {
     console.error('Error submitting form:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ success: false, message: 'An error occurred' })
-    };
+    res.status(500).json({ success: false, message: 'An error occurred' });
   }
-};
+});
 
 
 app.use('/.netlify/functions/app', router);
