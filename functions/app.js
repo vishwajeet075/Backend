@@ -7,17 +7,17 @@ const bodyParser = require('body-parser');
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
 
-const corsOptions = {
+/*const corsOptions = {
   origin: ['https://api.greenovate.in','https://server.greenovate.in'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 200
 };
-
+*/
 
 const app = express();
-app.use(cors(corsOptions));
+app.use(cors());
 
 
 
@@ -195,7 +195,7 @@ async function createTable() {
   }
 }
 
-app.post('/submit-form-1', cors(corsOptions), async (req, res) => {
+app.post('/submit-form-1',  async (req, res) => {
     console.log('Received form submission request');
     console.log('Request body:', req.body);
     const { name, email, message } = req.body;
@@ -240,7 +240,7 @@ async function createTable_contact() {
   }
 }
 
-app.post('/submit-contact-form', cors(corsOptions), async (req, res) => {
+app.post('/submit-contact-form',  async (req, res) => {
   console.log('Received form submission request');
   console.log('Request body:', req.body);
   const { name, email, company, designation, city, country, message } = req.body;
