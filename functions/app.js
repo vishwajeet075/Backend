@@ -3,7 +3,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2/promise');
+
 
 const app = express();
 const router = express.Router();
@@ -156,7 +156,7 @@ let transporter = nodemailer.createTransport({
       }
   });
 
-// Database connection configuration
+/* Database connection configuration
 const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -207,7 +207,7 @@ app.post('/submit-form-1', async (req, res) => {
     console.error('Error submitting form:', error);
     res.status(500).json({ success: false, message: 'An error occurred' });
   }
-});
+});*/
 
 app.use('/.netlify/functions/app', router);
 
