@@ -156,58 +156,64 @@ let transporter = nodemailer.createTransport({
       }
   });
 
-/* Database connection configuration
-const dbConfig = {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  ssl: {
-    rejectUnauthorized: true,
+const mysql = require('serverless-mysql')({
+  config: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    ssl: {
+      rejectUnauthorized: true,
+    }
   }
-};
+});
 
-// Create database connection pool
-const pool = mysql.createPool(dbConfig);
-
-// Create table if not exists
 async function createTable() {
   try {
-    const connection = await pool.getConnection();
-    await connection.query(`
+    await mysql.query(`
       CREATE TABLE IF NOT EXISTS contact_mini (
         email VARCHAR(255) PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         message TEXT NOT NULL
       )
     `);
-    connection.release();
     console.log('Table created or already exists');
   } catch (error) {
     console.error('Error creating table:', error);
   }
 }
 
-// ... (keep your existing routes)
+exports.handler = async (event, context) => {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' };
+  }
 
-// Handle form submission
-app.post('/submit-form-1', async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, message } = JSON.parse(event.body);
+
   try {
     await createTable(); // Ensure table exists
-    const connection = await pool.getConnection();
-    const [result] = await connection.query(
+    
+    await mysql.query(
       'INSERT INTO contact_mini (email, name, message) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, message = ?',
       [email, name, message, name, message]
     );
-    connection.release();
-    res.json({ success: true, message: 'Form submitted successfully' });
+
+    await mysql.end();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ success: true, message: 'Form submitted successfully' })
+    };
   } catch (error) {
     console.error('Error submitting form:', error);
-    res.status(500).json({ success: false, message: 'An error occurred' });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ success: false, message: 'An error occurred' })
+    };
   }
-});*/
+};
+
 
 app.use('/.netlify/functions/app', router);
 
