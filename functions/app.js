@@ -195,28 +195,29 @@ async function createTable() {
   }
 }
 
-app.post('/submit-form-1', async (req, res) => {
+app.post('/submit-form-1', cors(corsOptions), async (req, res) => {
     console.log('Received form submission request');
-  console.log('Request body:', req.body);
-  const { name, email, message } = req.body;
-  try {
-       console.log('Ensuring table exists...');
-    await createTable(); // Ensure table exists
+    console.log('Request body:', req.body);
+    const { name, email, message } = req.body;
+    try {
+        console.log('Ensuring table exists...');
+        await createTable(); // Ensure table exists
 
-     console.log('Inserting data into table...');
-    await mysql.query(
-      'INSERT INTO contact_mini (email, name, message) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, message = ?',
-      [email, name, message, name, message]
-    );
-    console.log('Data inserted successfully');
-    await mysql.end();
+        console.log('Inserting data into table...');
+        await mysql.query(
+            'INSERT INTO contact_mini (email, name, message) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, message = ?',
+            [email, name, message, name, message]
+        );
+        console.log('Data inserted successfully');
+        await mysql.end();
 
-    res.json({ success: true, message: 'Form submitted successfully' });
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    res.status(500).json({ success: false, message: 'An error occurred' });
-  }
+        res.json({ success: true, message: 'Form submitted successfully' });
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        res.status(500).json({ success: false, message: 'An error occurred' });
+    }
 });
+
 
 
 app.use('/.netlify/functions/app', router);
