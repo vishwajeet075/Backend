@@ -3,29 +3,29 @@ const serverless = require('serverless-http');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-const bodyParser = require('body-parser');
+/*const bodyParser = require('body-parser');*/
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
 
-/*const corsOptions = {
-  origin: ['https://api.greenovate.in','https://server.greenovate.in'],
+const corsOptions = {
+  origin: ['https://api.greenovate.in'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 200
 };
-*/
+
 
 const app = express();
-app.use(cors());
+app.use(cors(corsOptions));
 
 
 
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+/*app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '100mb' }));
-app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));*/
 
 
 
