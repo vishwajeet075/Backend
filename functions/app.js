@@ -25,8 +25,8 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: '100mb' }));
-app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+app.use(bodyParser.json({ limit: '200mb' }));
+app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
 
 
@@ -51,7 +51,7 @@ let transporter = nodemailer.createTransport({
   });
  
   
-  app.post('/submit-form', async (req, res) => {
+/*  app.post('/submit-form', async (req, res) => {
     try {
       const formData = req.body;
     
@@ -77,7 +77,7 @@ let transporter = nodemailer.createTransport({
       console.error('Error processing form submission or sending email:', error);
       res.status(500).json({ message: 'An error occurred while processing your submission' });
     }
-  });
+  });*/
  
   // Custom middleware to handle file uploads
   const handleFileUpload = (req, res, next) => {
