@@ -4,7 +4,6 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const multer = require('multer');
 
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
@@ -25,15 +24,9 @@ app.use(cors(corsOptions));
 
 
 app.use(express.json());
-/*app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '200mb' }));
-app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));*/
-
-app.use(express.urlencoded({ extended: true }));
-
-const upload = multer({
-  limits: { fileSize: 200 * 1024 * 1024 } // 200MB limit
-});
+app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
 
 
@@ -86,7 +79,7 @@ let transporter = nodemailer.createTransport({
     }
   });*/
  
-  /*Custom middleware to handle file uploads
+  // Custom middleware to handle file uploads
   const handleFileUpload = (req, res, next) => {
     let body = '';
     let file = null;
@@ -171,44 +164,7 @@ let transporter = nodemailer.createTransport({
           console.error('Error processing application or sending email:', error);
           res.status(500).json({ message: 'An error occurred while processing your application' });
       }
-  });*/
-
-app.post('/submit-form-job-application', upload.single('cv'), async (req, res) => {
-  try {
-    const formData = req.body;
-    const cv = req.file;
-
-    let mailOptions = {
-      from: '"Greenovate Job Application" <Greenovate@gmail.com>',
-      to: process.env.EMAIL_USER,
-      subject: "New Job Application",
-      html: `
-        <h1>New Job Application</h1>
-        <p><strong>Name:</strong> ${formData.name}</p>
-        <p><strong>Email:</strong> ${formData.email}</p>
-        <p><strong>Role Applying for:</strong> ${formData.role}</p>
-        <p><strong>Qualification:</strong> ${formData.qualification}</p>
-        <p><strong>Location:</strong> ${formData.location}</p>
-        <p><strong>Cover Letter:</strong> ${formData.coverLetter}</p>
-      `,
-      attachments: []
-    };
-
-    if (cv) {
-      mailOptions.attachments.push({
-        filename: cv.originalname,
-        content: cv.buffer
-      });
-    }
-
-    await transporter.sendMail(mailOptions);
-
-    res.status(200).json({ message: 'Application submitted successfully and email sent' });
-  } catch (error) {
-    console.error('Error processing application or sending email:', error);
-    res.status(500).json({ message: 'An error occurred while processing your application', error: error.message });
-  }
-});
+  });
 
 
 
