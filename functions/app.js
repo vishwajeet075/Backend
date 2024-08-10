@@ -3,7 +3,7 @@ const serverless = require('serverless-http');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-/*const bodyParser = require('body-parser');*/
+
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
 
@@ -165,104 +165,7 @@ let transporter = nodemailer.createTransport({
       }
   });
 
-console.log('Initializing MySQL connection...');
-const mysql = serverlessMysql({
-  config: {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    ssl: {
-      rejectUnauthorized: true,
-    }
-  }
-});
 
-async function createTable() {
-    console.log('Attempting to create table...');
-  try {
-    await mysql.query(`
-      CREATE TABLE IF NOT EXISTS contact_mini (
-        email VARCHAR(255) PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        message TEXT NOT NULL
-      )
-    `);
-    console.log('Table created or already exists');
-  } catch (error) {
-    console.error('Error creating table:', error);
-  }
-}
-
-app.post('/submit-form-1',  async (req, res) => {
-    console.log('Received form submission request');
-    console.log('Request body:', req.body);
-    const { name, email, message } = req.body;
-    try {
-        console.log('Ensuring table exists...');
-        await createTable(); // Ensure table exists
-
-        console.log('Inserting data into table...');
-        await mysql.query(
-            'INSERT INTO contact_mini (email, name, message) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, message = ?',
-            [email, name, message, name, message]
-        );
-        console.log('Data inserted successfully');
-        await mysql.end();
-
-        res.json({ success: true, message: 'Form submitted successfully' });
-    } catch (error) {
-        console.error('Error submitting form:', error);
-        res.status(500).json({ success: false, message: 'An error occurred' });
-    }
-});
-
-async function createTable_contact() {
-  console.log('Attempting to create table...');
-  try {
-    await mysql.query(`
-      CREATE TABLE IF NOT EXISTS Contact (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        company VARCHAR(255),
-        designation VARCHAR(255),
-        city VARCHAR(255),
-        country VARCHAR(255),
-        message TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    console.log('Table created or already exists');
-  } catch (error) {
-    console.error('Error creating table:', error);
-  }
-}
-
-app.post('/submit-contact-form',  async (req, res) => {
-  console.log('Received form submission request');
-  console.log('Request body:', req.body);
-  const { name, email, company, designation, city, country, message } = req.body;
-
-  try {
-    console.log('Ensuring table exists...');
-    await createTable_contact(); // Ensure table exists
-
-    console.log('Inserting data into table...');
-    await mysql.query(
-      'INSERT INTO Contact (name, email, company, designation, city, country, message) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [name, email, company, designation, city, country, message]
-    );
-
-    console.log('Data inserted successfully');
-    await mysql.end();
-    res.json({ success: true, message: 'Form submitted successfully' });
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    res.status(500).json({ success: false, message: 'An error occurred' });
-  }
-});
 
 app.use('/.netlify/functions/app', router);
 
