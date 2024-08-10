@@ -3,6 +3,7 @@ const serverless = require('serverless-http');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
