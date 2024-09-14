@@ -10,7 +10,7 @@ const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
 
 const corsOptions = {
-  origin: ['https://api.greenovate.in'],
+  origin: ['https://greenovate.in'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
