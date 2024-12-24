@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const client = require('prom-client');
 
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
@@ -20,6 +21,7 @@ const corsOptions = {
 
 const app = express();
 app.use(cors(corsOptions));
+const register = new client.Registry();
 
 
 
@@ -44,6 +46,33 @@ let transporter = nodemailer.createTransport({
     }
   });
  
+
+  // Register default metrics
+client.collectDefaultMetrics({ register });
+
+// Example custom metric
+const httpRequestDuration = new client.Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'Duration of HTTP requests in seconds',
+    labelNames: ['method', 'route', 'status_code'],
+});
+register.registerMetric(httpRequestDuration);
+
+// Middleware to collect HTTP metrics
+app.use((req, res, next) => {
+    const end = httpRequestDuration.startTimer();
+    res.on('finish', () => {
+        end({ method: req.method, route: req.path, status_code: res.statusCode });
+    });
+    next();
+});
+
+// Metrics endpoint
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+});
+
   
   app.post('/submit-form', async (req, res) => {
     try {
