@@ -22,7 +22,7 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 
-const gateway = new Pushgateway('http://<pushgateway-ip-or-domain>:9091');
+const gateway = new Pushgateway('http:172.23.176.1:9091');
 const counter = new Counter({
     name: 'nodejs_requests_total',
     help: 'Total number of requests',
