@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const client = require('prom-client');
+const { Pushgateway, Counter } = require('prom-client');
 
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
@@ -21,8 +21,24 @@ const corsOptions = {
 
 const app = express();
 app.use(cors(corsOptions));
-const register = new client.Registry();
 
+const gateway = new Pushgateway('http://<pushgateway-ip-or-domain>:9091');
+const counter = new Counter({
+    name: 'nodejs_requests_total',
+    help: 'Total number of requests',
+});
+
+// Increment counter when a request is handled
+counter.inc();
+
+// Push metrics to the Pushgateway
+gateway.pushAdd({ jobName: 'netlify-backend' }, (err) => {
+    if (err) {
+        console.error('Error pushing metrics:', err);
+    } else {
+        console.log('Metrics pushed successfully.');
+    }
+});
 
 
 
@@ -45,33 +61,7 @@ let transporter = nodemailer.createTransport({
       pass: process.env.EMAIL_PASS
     }
   });
- 
 
-  // Register default metrics
-client.collectDefaultMetrics({ register });
-
-// Example custom metric
-const httpRequestDuration = new client.Histogram({
-    name: 'http_request_duration_seconds',
-    help: 'Duration of HTTP requests in seconds',
-    labelNames: ['method', 'route', 'status_code'],
-});
-register.registerMetric(httpRequestDuration);
-
-// Middleware to collect HTTP metrics
-app.use((req, res, next) => {
-    const end = httpRequestDuration.startTimer();
-    res.on('finish', () => {
-        end({ method: req.method, route: req.path, status_code: res.statusCode });
-    });
-    next();
-});
-
-// Metrics endpoint
-app.get('/metrics', async (req, res) => {
-    res.set('Content-Type', register.contentType);
-    res.end(await register.metrics());
-});
 
   
   app.post('/submit-form', async (req, res) => {
