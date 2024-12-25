@@ -5,7 +5,9 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const { Pushgateway, Counter } = require('prom-client');
+const client = require('prom-client');
+const axios = require('axios');
+
 
 const serverlessMysql = require('serverless-mysql');
 const router = express.Router();
@@ -22,23 +24,53 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 
-const gateway = new Pushgateway('https://2eb5-157-33-237-230.ngrok-free.app');
-const counter = new Counter({
-    name: 'nodejs_requests_total',
-    help: 'Total number of requests',
+
+// Enable default metrics (CPU, memory, event loop lag, etc.)
+client.collectDefaultMetrics({
+  prefix: "node_", // Add a prefix to avoid collisions.
+  timeout: 60000,   // Collect metrics every 5 seconds.
 });
 
-// Increment counter when a request is handled
-counter.inc();
-
-// Push metrics to the Pushgateway
-gateway.pushAdd({ jobName: 'netlify-backend' }, (err) => {
-    if (err) {
-        console.error('Error pushing metrics:', err);
-    } else {
-        console.log('Metrics pushed successfully.');
-    }
+// Create custom metrics
+const httpRequestCounter = new client.Counter({
+  name: "http_requests_total",
+  help: "Total number of HTTP requests received",
+  labelNames: ["method", "status"], // Add labels for detailed insights.
 });
+
+const httpResponseDuration = new client.Histogram({
+  name: "http_response_duration_seconds",
+  help: "Histogram of HTTP response times in seconds",
+  labelNames: ["method", "status"],
+  buckets: [0.1, 0.3, 0.5, 1, 2, 5], // Define custom buckets.
+});
+
+// Middleware to capture HTTP request and response metrics
+app.use((req, res, next) => {
+  const end = httpResponseDuration.startTimer({ method: req.method });
+  res.on("finish", () => {
+    end({ status: res.statusCode });
+    httpRequestCounter.labels(req.method, res.statusCode).inc();
+  });
+  next();
+});
+
+// Expose /metrics endpoint
+app.get("/metrics", async (req, res) => {
+  try {
+    res.set("Content-Type", client.register.contentType);
+    res.send(await client.register.metrics());
+  } catch (ex) {
+    res.status(500).end(ex.message);
+  }
+});
+
+// Example route
+app.get("/", (req, res) => {
+  res.send("Hello, this is the backend of greenovate website!");
+});
+
+
 
 
 
